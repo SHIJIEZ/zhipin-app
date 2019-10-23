@@ -50,7 +50,6 @@ class Register extends Component {
         }
 
         const { type } = this.state;
-        console.log(this.props)
         return (
             <div>
                 <NavBar>人&nbsp;才&nbsp;招&nbsp;聘</NavBar>

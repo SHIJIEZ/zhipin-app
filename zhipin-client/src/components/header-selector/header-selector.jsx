@@ -20,7 +20,7 @@ class HeaderSelector extends Component {
         this.headerList = []; // 头像待选数据
         for (let i = 0; i < 20; i++) {
             this.headerList.push({
-                icon: require(`./images/头像${i + 1}.png`),
+                icon: require(`../../assets/images/头像${i + 1}.png`),
                 text: `头像${i + 1}`
             })
         }

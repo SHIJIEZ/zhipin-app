@@ -6,3 +6,7 @@ export const reqRegister = (userInfo) => ajax("/register", userInfo, "POST");
 export const reqLogin = (userInfo) => ajax("/login", userInfo, "POST");
 // 更新用户信息
 export const reqUpdateUser = (userInfo) => ajax("/improveuser", userInfo, "POST");
+// 获取用户信息
+export const reqGetUser = () => ajax("/getuser");
+// 获取用户列表
+export const reqUserList = (type) => ajax("/userlist", { type })

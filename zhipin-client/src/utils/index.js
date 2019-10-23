@@ -3,7 +3,7 @@
 */
 
 // 获取注册重定向路由
-function registerRedirect(type, headContent) {
+function getRedirectTo(type, headContent) {
     let path;
     type === "jobseeker" ? path = "/jobseeker" : path = "/recruiter";
     !headContent ? path += "info" : path = path;
@@ -11,5 +11,5 @@ function registerRedirect(type, headContent) {
 }
 
 export {
-    registerRedirect
+    getRedirectTo
 }

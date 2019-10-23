@@ -1,11 +1,13 @@
-import { reqLogin, reqRegister, reqUpdateUser } from "../api/index";
+import { reqLogin, reqRegister, reqUpdateUser, reqGetUser, reqUserList } from "../api/index";
 import {
     AUTH_SUCCESS,
     ERROR_MSG,
     RECIVE_USER,
     RESET_USER,
-    CMP_IMMIT
-} from "./action-types"
+    CMP_IMMIT,
+    RECIVE_USER_LIST
+} from "./action-types";
+
 
 // 授权成功的同步action
 const authSuccess = (userInfo) => ({ type: AUTH_SUCCESS, data: userInfo });
@@ -14,9 +16,12 @@ const errorMsg = (errmsg) => ({ type: ERROR_MSG, data: errmsg });
 // 更新成功的同步action
 const reciveUser = (userInfo) => ({ type: RECIVE_USER, data: userInfo });
 // 重置用户的同步action
-const resetUser = (errmsg) => ({ type: RESET_USER, data: errmsg });
+export const resetUser = (errmsg) => ({ type: RESET_USER, data: errmsg });
 // 组件内部修改全局状态的同步action
 const cmp_immit = (injectData) => ({ type: CMP_IMMIT, data: injectData });
+// 接受用户列表成功的同步action
+const reciveUserList = (data) => ({ type: RECIVE_USER_LIST, data: data })
+
 
 // 组件内部修改全局状态
 export const cmpInnerModify = (data) => {
@@ -25,6 +30,7 @@ export const cmpInnerModify = (data) => {
     }
 }
 
+// 用户注册异步action
 export const register = (userInfo) => {
     const { username, password, confirmPassword } = userInfo;
     if (!username === "" || password === "" || confirmPassword === "") return errorMsg("不能有空的输入");
@@ -43,6 +49,7 @@ export const register = (userInfo) => {
     }
 }
 
+// 用户登录异步action
 export const login = (userInfo) => {
     const { username, password } = userInfo;
     if (!username === "" || password === "") return errorMsg("不能有空的输入");
@@ -59,7 +66,7 @@ export const login = (userInfo) => {
         }
     }
 }
-
+// 完善用户信息异步action
 export const improveUser = (userInfo) => {
 
     return async dispatch => {
@@ -71,6 +78,32 @@ export const improveUser = (userInfo) => {
         } else {
             // 更新失败 分发action
             dispatch(resetUser(responseData.msg))
+        }
+    }
+}
+
+// 获取用户信息异步action
+export const getUser = () => {
+    return async dispatch => {
+        const response = await reqGetUser();
+        const responseData = response.data;
+        if (responseData.code === 1) {
+            dispatch(reciveUser(responseData.data))
+        } else {
+            dispatch(resetUser(responseData.msg))
+        }
+    }
+}
+
+// 获取用户列表的异步action
+export const getUserList = (type) => {
+    return async dispatch => {
+        const response = await reqUserList(type);
+        const responseData = response.data;
+        if (responseData.code === 1) {
+            dispatch(reciveUserList(responseData.data))
+        } else {
+            dispatch(errorMsg(responseData.msg))
         }
     }
 }

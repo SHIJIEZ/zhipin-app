@@ -28,9 +28,7 @@ class JobseekerInfo extends Component {
 
     // 求职者完善信息收集
     jobseekerInfoGahter = (infoType, v) => {
-        this.setState({
-            [infoType]: v
-        })
+        this.setState({ [infoType]: v })
     }
 
     // 求职者完善信息提交

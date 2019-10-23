@@ -5,6 +5,8 @@ const { UserModel } = require("../db/models.js");
 const featchFilter = { password: 0, __v: 0 }; // 数据库查询字段过滤
 const respDesc = require("../common/resp-desc");
 const respBuild = respDesc.ResponseDataBuild;
+const APIS_COLLEC = require("../common/api-def");
+
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
@@ -12,7 +14,7 @@ router.get('/', function (req, res, next) {
 });
 
 // 注册
-router.post("/register", (req, res) => {
+router.post(APIS_COLLEC.register.url, (req, res) => {
   const { username, password, type } = req.body;
   if (!username || !password || !type) {
     return res.send({ code: respDesc.FAILED_CODE, msg: respDesc.PARAMS_ERR })
@@ -37,7 +39,7 @@ router.post("/register", (req, res) => {
 })
 
 // 登录
-router.post("/login", (req, res) => {
+router.post(APIS_COLLEC.login.url, (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) {
     return res.send({ code: respDesc.FAILED_CODE, msg: respDesc.PARAMS_ERR })
@@ -55,22 +57,20 @@ router.post("/login", (req, res) => {
   })
 })
 
-
 // 完善用户信息
-router.post("/improveuser", (req, res) => {
+router.post(APIS_COLLEC.improve.url, (req, res) => {
   // 获取cookie中的userid
   const userid = req.cookies.userid;
   if (!userid) {
     return res.send({
       code: respDesc.FAILED_CODE,
-      msg: respDesc.NOT_AUTH 
+      msg: respDesc.NOT_AUTH
     })
   }
 
   const newUserInfo = req.body; // 需要更新的信息
   UserModel.findByIdAndUpdate({ _id: userid }, newUserInfo, (err, oldUserInfo) => {
     if (err) {
-      // return res.send({ code: respDesc.FAILED_CODE, msg: respDesc.DB_ERR });
       return res.send(respBuild(respDesc.FAILED_CODE, respDesc.DB_ERR));
     }
     if (!oldUserInfo) { // 错误的userid
@@ -84,5 +84,39 @@ router.post("/improveuser", (req, res) => {
   })
 })
 
+// 获取用户信息
+router.get(APIS_COLLEC.getuser.url, (req, res) => {
+  const userid = req.cookies.userid;
+  if (!userid) {
+    return res.send(respBuild(respDesc.FAILED_CODE, respDesc.NOT_AUTH))
+  }
+  UserModel.findOne({ _id: userid }, featchFilter, (err, userInfo) => {
+    if (err) {
+      return res.send(respBuild(respDesc.FAILED_CODE, respDesc.DB_ERR));
+    }
+
+    if (!userInfo) { // 错误的userid
+      res.clearCookie(userid); //  通知浏览器删除对应cookie
+      return res.send(respBuild(respDesc.FAILED_CODE, respDesc.NOT_AUTH));
+    }
+    return res.send(respBuild(respDesc.SUCC_CODE, userInfo));
+  })
+
+})
+
+// 用户列表展示
+router.get(APIS_COLLEC.userlist.url, (req, res) => {
+  const { type } = req.query;
+  if (type !== "jobseeker" && type !== "recruiter") {
+    return res.send(respBuild(respDesc.FAILED_CODE, respDesc.PARAMS_ERR))
+  }
+  UserModel.find({ type }, featchFilter, (err, userList) => {
+    if (err) {
+      return res.send(respBuild(respDesc.FAILED_CODE, respDesc.DB_ERR));
+    }
+    console.log(userList)
+    return res.send(respBuild(respDesc.SUCC_CODE, userList));
+  })
+})
 
 module.exports = router;
