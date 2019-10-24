@@ -4,6 +4,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { WingBlank, WhiteSpace, Card } from 'antd-mobile';
+import { withRouter } from "react-router-dom";
 
 const Header = Card.Header
 const Body = Card.Body
@@ -13,9 +14,9 @@ class UserList extends Component {
         userList: PropTypes.array.isRequired
     }
     render() {
-        const { userList } = this.props
+        const { userList } = this.props;
         return (
-            <WingBlank style={{marginBottom: 50, marginTop: 45}}>
+            <WingBlank style={{ marginBottom: 50, marginTop: 45 }}>
                 {
                     userList.map(user => (
 
@@ -41,4 +42,4 @@ class UserList extends Component {
     }
 }
 
-export default UserList;
+export default withRouter(UserList);

@@ -107,3 +107,9 @@ export const getUserList = (type) => {
         }
     }
 }
+// 发送消息action
+export const sendMsg = ({ content, from, to }) => {
+    return async dispatch => {
+        console.log("发送消息：", { content, from, to })
+    }
+}

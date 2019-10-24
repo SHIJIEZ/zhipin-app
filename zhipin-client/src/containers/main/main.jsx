@@ -18,6 +18,7 @@ import Message from "../message/message";
 import Personal from "../personal/personal";
 import NotFound from "../../components/not-found/not-found";
 import NavFooter from "../../components/nav-footer/nav-footer";
+import Chat from "../chat/chat";
 
 
 class Main extends Component {
@@ -91,8 +92,9 @@ class Main extends Component {
 
         if (currNav) {
             // 底部只能显示三个选项 招聘者显示求职者 求职者显示招聘者
-            user.type === "recruiter" ? navList[1].hide = true : navList[0].hide = true
+            user.type === "recruiter" ? navList[1].hide = true : navList[0].hide = true;
         }
+        console.log("判断中...")
         return (
             <div>
                 {currNav ? <NavBar className="sticky-header">{currNav.title}</NavBar> : null}
@@ -100,6 +102,8 @@ class Main extends Component {
                     {navList.map(nav => <Route path={nav.path} component={nav.component}></Route>)}
                     <Route path="/recruiterinfo" component={RecruiterInfo}></Route>
                     <Route path="/jobseekerinfo" component={JobseekerInfo}></Route>
+                    <Route path="/chat/:userid" component={Chat}></Route>
+
                     <Route component={NotFound}></Route>
                 </Switch>
                 {currNav ? <NavFooter navList={navList}>底部导航</NavFooter> : null}

@@ -10,13 +10,11 @@ import { getUserList } from "../../redux/actions";
 class Jobseeker extends Component {
     componentDidMount() {
         /*求职者显示招聘者列表*/
-
         this.props.getUserList("recruiter")
     }
     
     render() {
         return (
-
             <UserList userList={this.props.userList}></UserList>
         )
     }
