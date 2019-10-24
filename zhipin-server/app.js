@@ -33,7 +33,7 @@ app.use((req, res, next) => {
   })) {
     const userid = req.cookies.userid;
     if (!userid) {
-      // 未携带状态 返回失败resp
+      // 未携带状态 拦截返回
       return res.send(respBuild(respDesc.FAILED_CODE, respDesc.NOT_AUTH))
     }
   }

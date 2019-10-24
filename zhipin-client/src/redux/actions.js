@@ -7,6 +7,7 @@ import {
     CMP_IMMIT,
     RECIVE_USER_LIST
 } from "./action-types";
+import clientIO from "socket.io-client";
 
 
 // 授权成功的同步action
@@ -21,6 +22,26 @@ export const resetUser = (errmsg) => ({ type: RESET_USER, data: errmsg });
 const cmp_immit = (injectData) => ({ type: CMP_IMMIT, data: injectData });
 // 接受用户列表成功的同步action
 const reciveUserList = (data) => ({ type: RECIVE_USER_LIST, data: data })
+
+// 初始化wssocket对象
+const initClientIO = () => {
+    if (!clientIO.socket) {
+        clientIO.socket = clientIO("ws://localhost:4000");
+        // 绑定监听, 接收服务器发送的消息
+        clientIO.socket.on("receiveMsg", (data) => {
+            console.log("接收到服务器发送的消息", data);
+        })
+    }
+}
+
+// 发送消息action
+export const sendMsg = ({ content, from, to }) => {
+    return async dispatch => {
+        console.log("发送消息：", { content, from, to })
+        initClientIO();
+        clientIO.socket.emit("sendMsg", { content, from, to });
+    }
+}
 
 
 // 组件内部修改全局状态
@@ -105,11 +126,5 @@ export const getUserList = (type) => {
         } else {
             dispatch(errorMsg(responseData.msg))
         }
-    }
-}
-// 发送消息action
-export const sendMsg = ({ content, from, to }) => {
-    return async dispatch => {
-        console.log("发送消息：", { content, from, to })
     }
 }

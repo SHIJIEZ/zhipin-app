@@ -33,9 +33,6 @@ const chatSchema = mongoose.Schema({
 // 定义能操作chats集合数据的Model
 const ChatModel = mongoose.model('chat', chatSchema) // 集合为: chats
 
-
-
-
 exports.UserModel = UserModel;
 exports.ChatModel = ChatModel
 

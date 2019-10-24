@@ -6,20 +6,21 @@
 
 var app = require('../app');
 var debug = require('debug')('zhipin-server:server');
-var http = require('http');
+var http = require('http'); 
 
 /**
  * Get port from environment and store in Express.
  */
 
 var port = normalizePort(process.env.PORT || '4000');
-app.set('port', port);
+app.set('port', port); 
 
 /**
  * Create HTTP server.
  */
 
 var server = http.createServer(app);
+require("../socket-io/io-server")(server); // 注入websocket服务
 
 /**
  * Listen on provided port, on all network interfaces.
