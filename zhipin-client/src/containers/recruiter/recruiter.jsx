@@ -11,7 +11,7 @@ import { getUserList } from "../../redux/actions";
 class Recruiter extends Component {
     componentDidMount() {
         /*招聘者显示求职者列表*/
-        this.props.getUserList("jobseeker")
+        this.props.getUserList("jobseeker");
     }
 
     render() {

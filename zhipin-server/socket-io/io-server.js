@@ -17,7 +17,7 @@ module.exports = server => {
                 io.emit("receiveMsg", chatMsg);
                 console.log("【ws】服务器已向客户端回应消息: ", chatMsg);
             })
-
+                
 
         })
     })

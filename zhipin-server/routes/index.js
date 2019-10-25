@@ -2,11 +2,10 @@ const express = require('express');
 const router = express.Router();
 const md5 = require("blueimp-md5");
 const { UserModel, ChatModel } = require("../db/models.js");
-const featchFilter = { password: 0, __v: 0 }; // 数据库查询字段过滤
 const respDesc = require("../common/resp-desc");
 const respBuild = respDesc.ResponseDataBuild;
 const APIS_COLLEC = require("../common/api-def");
-
+const featchFilter = { password: 0, __v: 0 }; // 数据库查询字段过滤
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
@@ -119,8 +118,8 @@ router.get(APIS_COLLEC.userlist.url, (req, res) => {
   })
 })
 
-
-router.get('/msglist', function (req, res) {
+// 用户聊天所有消息列表
+router.get('/msglist', (req, res) => {
   // 获取cookie中的userid
   const userid = req.cookies.userid;
   // 查询得到所有user文档数组
@@ -128,7 +127,6 @@ router.get('/msglist', function (req, res) {
     if (err) {
       return res.send(respBuild(respDesc.FAILED_CODE, respDesc.DB_ERR));
     }
-    console.log(userDocs)
 
     // 用对象存储所有user信息: key为user的_id, val为name和header组成的user对象
     const users = userDocs.reduce((users, user) => {
@@ -146,11 +144,9 @@ router.get('/msglist', function (req, res) {
         return res.send(respBuild(respDesc.FAILED_CODE, respDesc.DB_ERR));
       }
       // 返回包含所有用户和当前用户相关的所有聊天消息的数据
-      res.send({ code: 0, data: { users, chatMsgs } })
+      res.send({ code: 1, data: { users, chatMsgs } })
     })
   })
 })
-
-
 
 module.exports = router;

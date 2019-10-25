@@ -1,6 +1,9 @@
 export const AUTH_SUCCESS = "auth_success"; // 授权成功
 export const ERROR_MSG = "error_msg"; // 错误提示信息
-export const RECIVE_USER = "recive_user"; // 接收用户
+export const RECEIVE_USER = "receive_user"; // 接收用户
 export const RESET_USER = "reset_user"; // 重置用户
 export const CMP_IMMIT = "cmp_immit"; // 组件内部修改全局状态
-export const RECIVE_USER_LIST = "recvie_user_list"; // 获取用户列表
+export const RECEIVE_USER_LIST = "receive_user_list"; // 获取用户列表
+export const RECEIVE_MSG_LIST = "receive_msg_list"; // 接收所有消息相关列表
+export const RECEIVE_MSG = "recieve_msg"; // 接收一条消息
+export const RECEIVE_MSG_LIST_ERR = "get_receive_msg_err"; // 获取用户消息列表失败

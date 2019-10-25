@@ -14,6 +14,7 @@ import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
 import Logo from "../../components/logo/logo";
 import { login, cmpInnerModify } from "../../redux/actions";
+import Cookies from "js-cookie";
 
 
 class Login extends Component {
@@ -21,10 +22,11 @@ class Login extends Component {
         username: "",
         password: "",
     }
+
     // 注册路由跳转
     toRegister = () => {
         this.props.cmpInnerModify({ msg: "" }); // 清除错误信息
-        this.props.history.replace("/register")
+        this.props.history.replace("/register");
     }
 
     // 用户登录信息收集
