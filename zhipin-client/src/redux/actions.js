@@ -1,4 +1,7 @@
-import { reqLogin, reqRegister, reqUpdateUser, reqGetUser, reqUserList, reqChatMsgList } from "../api/index";
+import {
+    reqLogin, reqRegister, reqUpdateUser, reqGetUser,
+    reqUserList, reqChatMsgList, reqModifyMsgRead
+} from "../api/index";
 import {
     AUTH_SUCCESS,
     ERROR_MSG,
@@ -8,7 +11,8 @@ import {
     RECEIVE_USER_LIST,
     RECEIVE_MSG_LIST,
     RECEIVE_MSG,
-    RECEIVE_MSG_LIST_ERR
+    RECEIVE_MSG_LIST_ERR,
+    MSG_READED
 } from "./action-types";
 import clientIO from "socket.io-client";
 
@@ -26,11 +30,13 @@ const cmp_immit = (injectData) => ({ type: CMP_IMMIT, data: injectData });
 // 接受用户列表成功的同步action
 const reciveUserList = (data) => ({ type: RECEIVE_USER_LIST, data: data });
 // 接收消息列表的同步action
-const receiveMsgList = ({ users, chatMsgs }) => ({ type: RECEIVE_MSG_LIST, data: { users, chatMsgs } });
+const receiveMsgList = ({ users, chatMsgs, userid }) => ({ type: RECEIVE_MSG_LIST, data: { users, chatMsgs, userid } });
 // 接收一条消息的同步action
-const receiveMsg = (chatMsg) => ({ type: RECEIVE_MSG, data: chatMsg });
+const receiveMsg = (chatMsg, userid) => ({ type: RECEIVE_MSG, data: { chatMsg, userid } });
 // 接收消息错误的同步action
 const receiveMsgListErr = (msg) => ({ type: RECEIVE_MSG_LIST_ERR, data: msg });
+// 读取某个聊天消息的同步action
+const msgReaded = ({ count, from, to }) => ({ type: MSG_READED, data: { count, from, to } });
 
 
 // 初始化wssocket对象
@@ -40,7 +46,7 @@ const initClientIO = (dispatch, userid) => {
         // 绑定监听, 接收服务器发送的消息
         clientIO.socket.on("receiveMsg", (chatMsg) => {
             if (chatMsg.to === userid || chatMsg.from === userid) { // 服务器为全局分发 属于自身的才进行接收
-                dispatch(receiveMsg(chatMsg))
+                dispatch(receiveMsg(chatMsg, userid))
             }
         })
     }
@@ -54,7 +60,7 @@ const getChatMsgList = async (dispatch, userid) => {
     if (responseData.code === 1) {
         // 分发同步action
         const { users, chatMsgs } = responseData.data;
-        dispatch(receiveMsgList({ users, chatMsgs }));
+        dispatch(receiveMsgList({ users, chatMsgs, userid }));
     } else {
         // 失败
         dispatch(receiveMsgListErr(responseData.msg));
@@ -65,8 +71,21 @@ const getChatMsgList = async (dispatch, userid) => {
 // 聊天发送消息action
 export const sendMsg = ({ content, from, to }) => {
     return async dispatch => {
-        console.log("发送消息：", { content, from, to })
+        // console.log("发送消息：", { content, from, to });
         clientIO.socket.emit("sendMsg", { content, from, to });
+    }
+}
+
+
+// 读取消息的异步action
+export const readedMsg = (from, to) => {
+    return async dispatch => {
+        const response = await reqModifyMsgRead(from);
+        const result = response.data;
+        if (result.code === 0) {
+            const count = result.data;
+            dispatch(msgReaded({ count, from, to }));
+        }
     }
 }
 

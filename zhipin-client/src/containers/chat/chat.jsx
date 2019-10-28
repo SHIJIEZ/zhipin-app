@@ -4,8 +4,12 @@
 import React, { Component } from "react";
 import { NavBar, List, InputItem, Grid, Icon } from "antd-mobile";
 import { connect } from "react-redux";
+import QueueAnim from "rc-queue-anim";
+
 import "./css/index.less";
-import { sendMsg } from "../../redux/actions";
+import { sendMsg, readedMsg } from "../../redux/actions";
+
+
 const Item = List.Item
 
 class Chat extends Component {
@@ -59,6 +63,13 @@ class Chat extends Component {
         window.scrollTo(0, document.body.scrollHeight);
     }
 
+    componentWillMount() {   // 组件退出前更新未读消息的数量
+        const from = this.props.match.params.userid;
+        const to = this.props.user._id;
+        this.props.readedMsg(from, to);
+    }
+
+
     render() {
         const { user } = this.props;
         const { users, chatMsgs } = this.props.chatState;
@@ -89,24 +100,26 @@ class Chat extends Component {
                     我与"{users[targetId].username}"的聊天
                 </NavBar>
                 <List style={{ marginTop: 45, marginBottom: 45 }}>
-                    {
-                        matchMsgs.map(msg => {
-                            if (msg.from === meId) { // 自己发送给对方
-                                return (
-                                    <Item key={msg._id} className="chat-me" extra={"我"}>
-                                        {msg.content}
-                                    </Item>
-                                )
+                    <QueueAnim type="right">
+                        {
+                            matchMsgs.map(msg => {
+                                if (msg.from === meId) { // 自己发送给对方
+                                    return (
+                                        <Item key={msg._id} className="chat-me" extra={"我"}>
+                                            {msg.content}
+                                        </Item>
+                                    )
 
-                            } else { // 对方发送给自己
-                                return (
-                                    <Item key={msg._id} thumb={targetHeaderIcon}>
-                                        {msg.content}
-                                    </Item>
-                                )
-                            }
-                        })
-                    }
+                                } else { // 对方发送给自己
+                                    return (
+                                        <Item key={msg._id} thumb={targetHeaderIcon}>
+                                            {msg.content}
+                                        </Item>
+                                    )
+                                }
+                            })
+                        }
+                    </QueueAnim>
                 </List>
 
                 <div className="am-tab-bar">
@@ -134,7 +147,6 @@ class Chat extends Component {
                                 }}
                             />
                         ) : null
-
                     }
 
                 </div>
@@ -145,5 +157,5 @@ class Chat extends Component {
 
 export default connect(
     state => ({ user: state.user, chatState: state.chatState }),
-    { sendMsg }
+    { sendMsg, readedMsg }
 )(Chat)

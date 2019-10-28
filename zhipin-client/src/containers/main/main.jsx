@@ -6,7 +6,7 @@ import { Switch, Route, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import Cookies from "js-cookie";
 import { NavBar } from "antd-mobile";
-import "./css/main.less"
+import "./css/main.less";
 
 import RecruiterInfo from "../recruiter-info/recruiter-info";
 import JobseekerInfo from "../jobseeker-info/jobseeker-info";
@@ -59,13 +59,11 @@ class Main extends Component {
     ]
 
     componentDidMount() {
-        // const userid = Cookies.get('userid');
         const { _id } = this.props.user;
         if (this.userid && !_id) {
             // 发送异步请求, 获取user
             this.props.getUser();
         }
-        
     }
 
     componentWillUpdate() {
@@ -77,7 +75,7 @@ class Main extends Component {
             return (<Redirect to="/login"></Redirect>)
         }
 
-        const { user } = this.props;
+        const { user, unReadCount } = this.props;
         if (!user._id) {
             return null;
         } else {
@@ -96,24 +94,24 @@ class Main extends Component {
             // 底部只能显示三个选项 招聘者显示求职者 求职者显示招聘者
             user.type === "recruiter" ? navList[1].hide = true : navList[0].hide = true;
         }
-        console.log("判断中...");
+
         return (
             <div>
                 {currNav ? <NavBar className="sticky-header">{currNav.title}</NavBar> : null}
                 <Switch>
-                    {navList.map(nav => <Route path={nav.path} component={nav.component}></Route>)}
+                    {navList.map(nav => <Route key={nav.path} path={nav.path} component={nav.component}></Route>)}
                     <Route path="/recruiterinfo" component={RecruiterInfo}></Route>
                     <Route path="/jobseekerinfo" component={JobseekerInfo}></Route>
                     <Route path="/chat/:userid" component={Chat}></Route>
                     <Route component={NotFound}></Route>
                 </Switch>
-                {currNav ? <NavFooter navList={navList}>底部导航</NavFooter> : null}
+                {currNav ? <NavFooter navList={navList} unReadCount={unReadCount}>底部导航</NavFooter> : null}
             </div>
         )
     }
 }
 
 export default connect(
-    state => ({ user: state.user }),
+    state => ({ user: state.user, unReadCount: state.chatState.unReadCount }),
     { getUser }
 )(Main);

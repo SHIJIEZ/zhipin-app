@@ -7,3 +7,4 @@ export const RECEIVE_USER_LIST = "receive_user_list"; // 获取用户列表
 export const RECEIVE_MSG_LIST = "receive_msg_list"; // 接收所有消息相关列表
 export const RECEIVE_MSG = "recieve_msg"; // 接收一条消息
 export const RECEIVE_MSG_LIST_ERR = "get_receive_msg_err"; // 获取用户消息列表失败
+export const MSG_READED = "msg_readed"; // 消息已读

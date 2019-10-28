@@ -11,12 +11,13 @@ const Item = TabBar.Item;
 
 class NavFooter extends Component {
     static propTypes = {
-        navList: propTypes.array.isRequired
+        navList: propTypes.array.isRequired,
+        unReadCount: propTypes.number.isRequired
     }
 
     render() {
-        let { location, history, navList } = this.props;
-        navList = navList.filter(nav=>!nav.hide); // 过滤隐藏为ture的选项
+        let { location, history, navList, unReadCount } = this.props;
+        navList = navList.filter(nav => !nav.hide); // 过滤隐藏为ture的选项
         return (
             <TabBar>
                 {
@@ -28,6 +29,7 @@ class NavFooter extends Component {
                                 selectedIcon={{ uri: require(`./images/${nav.icon}-selected.png`) }}
                                 selected={location.pathname === nav.path}
                                 onPress={() => history.push(nav.path)}
+                                badge={nav.path === "/message" ? unReadCount : 0}
                             >
                             </Item>
                         )

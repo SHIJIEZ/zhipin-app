@@ -13,5 +13,5 @@ export const reqUserList = (type) => ajax("/userlist", { type });
 // 获取当前用户聊天列表
 export const reqChatMsgList = () => ajax("/msglist");
 // 修改指定消息为已读
-export const reqModifyMsgRead = (from) => ajax("/redmsg", { from }, "POST");
+export const reqModifyMsgRead = (from) => ajax("/readedmsg", { from }, "POST");
 

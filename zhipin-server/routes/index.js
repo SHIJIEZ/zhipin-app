@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 const md5 = require("blueimp-md5");
 const { UserModel, ChatModel } = require("../db/models.js");
@@ -8,8 +8,8 @@ const APIS_COLLEC = require("../common/api-def");
 const featchFilter = { password: 0, __v: 0 }; // 数据库查询字段过滤
 
 /* GET home page. */
-router.get('/', function (req, res, next) {
-  res.render('index', { title: 'Express' });
+router.get("/", function (req, res, next) {
+  res.render("index", { title: "Express" });
 });
 
 // 注册
@@ -87,7 +87,7 @@ router.post(APIS_COLLEC.improve.url, (req, res) => {
 router.get(APIS_COLLEC.getuser.url, (req, res) => {
   const userid = req.cookies.userid;
   if (!userid) {
-    return res.send(respBuild(respDesc.FAILED_CODE, respDesc.NOT_AUTH))
+    return res.send(respBuild(respDesc.FAILED_CODE, respDesc.NOT_AUTH));
   }
   UserModel.findOne({ _id: userid }, featchFilter, (err, userInfo) => {
     if (err) {
@@ -100,7 +100,6 @@ router.get(APIS_COLLEC.getuser.url, (req, res) => {
     }
     return res.send(respBuild(respDesc.SUCC_CODE, userInfo));
   })
-
 })
 
 // 用户列表展示
@@ -113,13 +112,12 @@ router.get(APIS_COLLEC.userlist.url, (req, res) => {
     if (err) {
       return res.send(respBuild(respDesc.FAILED_CODE, respDesc.DB_ERR));
     }
-    console.log(userList)
     return res.send(respBuild(respDesc.SUCC_CODE, userList));
   })
 })
 
 // 用户聊天所有消息列表
-router.get('/msglist', (req, res) => {
+router.get(APIS_COLLEC.msglist.url, (req, res) => {
   // 获取cookie中的userid
   const userid = req.cookies.userid;
   // 查询得到所有user文档数组
@@ -139,13 +137,35 @@ router.get('/msglist', (req, res) => {
      参数2: 过滤条件
      参数3: 回调函数
     */
-    ChatModel.find({ '$or': [{ from: userid }, { to: userid }] }, featchFilter, (err, chatMsgs) => {
+    ChatModel.find({ "$or": [{ from: userid }, { to: userid }] }, featchFilter, (err, chatMsgs) => {
       if (err) {
         return res.send(respBuild(respDesc.FAILED_CODE, respDesc.DB_ERR));
       }
       // 返回包含所有用户和当前用户相关的所有聊天消息的数据
       res.send({ code: 1, data: { users, chatMsgs } })
     })
+  })
+})
+
+/*
+修改指定消息为已读
+ */
+router.post(APIS_COLLEC.readedmsg.url, (req, res) => {
+  // 得到请求中的from和to
+  const from = req.body.from
+  const to = req.cookies.userid
+  /*
+  更新数据库中的chat数据
+  参数1: 查询条件
+  参数2: 更新为指定的数据对象
+  参数3: 是否1次更新多条, 默认只更新一条
+  参数4: 更新完成的回调函数
+   */
+  ChatModel.update({ from, to, read: false }, { read: true }, { multi: true }, (err, doc) => {
+    if (err) {
+      return res.send(respBuild(respDesc.FAILED_CODE, respDesc.DB_ERR));
+    }
+    res.send({ code: 0, data: doc.nModified }) // 更新的数量
   })
 })
 
